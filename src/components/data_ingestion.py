@@ -64,5 +64,13 @@ class DataIngestion:
             train_data.to_csv(self.data_config.train_data_path, header=True, index=False)
             test_data.to_csv(self.data_config.test_data_path, header=True, index=False)      
             logger.info(f"train and test data split successful and stored respectively as csv files at {self.data_config.train_data_path}, {self.data_config.test_data_path}")     
+            return(
+                self.data_config.raw_data_path,
+                self.data_config.train_data_path,
+                self.data_config.test_data_path
+            )
+
+
+
         except:
             raise Exception
