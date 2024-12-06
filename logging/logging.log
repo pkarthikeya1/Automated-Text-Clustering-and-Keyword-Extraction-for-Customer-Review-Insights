@@ -1,0 +1,4 @@
+[2024-12-06 13:31:43,946, 4287805165, INFO, Establising Connection With SQL Database ]
+[2024-12-06 13:31:43,949, 4287805165, INFO, Successfully connected to the SQLite database. ]
+[2024-12-06 13:31:43,951, 4287805165, INFO, Reading New_Delhi_Reviews table  ]
+[2024-12-06 13:31:44,339, 4287805165, INFO, Successfully read the New_Delhi_Reviews as pandas dataframe ]

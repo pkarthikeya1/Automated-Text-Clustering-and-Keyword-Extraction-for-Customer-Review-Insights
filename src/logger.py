@@ -9,7 +9,7 @@ log_filepath = os.path.join(log_dir, file_name)
 
 os.makedirs(log_dir, exist_ok=True)
 
-LOGGING_STR = "[%(asctime)s, %(levelname)s, %(modulename)s, %(message)s ]"
+LOGGING_STR = "[%(asctime)s, %(module)s, %(levelname)s, %(message)s ]"
 
 logging.basicConfig(
     level= logging.INFO,
