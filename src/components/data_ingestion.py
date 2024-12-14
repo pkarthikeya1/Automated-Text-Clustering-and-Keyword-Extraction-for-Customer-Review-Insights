@@ -19,6 +19,7 @@ class DataBaseHandler:
 
     def __init__(self):
         self.DataBaseConn = DataBaseConfig()
+        pass
         
     def DataFrameExraction(self):
         try:
@@ -56,7 +57,7 @@ class DataIngestion:
         try:
             db_handler = DataBaseHandler()
             raw_data = db_handler.DataFrameExraction()
-            os.makedirs("artifacts")
+            os.makedirs("artifacts",exist_ok=True)
             raw_data.to_csv(self.data_config.raw_data_path, header=True, index=False)
             logger.info(f"succesfully ingested the raw data as a csv file into {self.data_config.raw_data_path}")
             logger.info("Initiating train test split")
@@ -64,13 +65,10 @@ class DataIngestion:
             train_data.to_csv(self.data_config.train_data_path, header=True, index=False)
             test_data.to_csv(self.data_config.test_data_path, header=True, index=False)      
             logger.info(f"train and test data split successful and stored respectively as csv files at {self.data_config.train_data_path}, {self.data_config.test_data_path}")     
+            
             return(
-                self.data_config.raw_data_path,
                 self.data_config.train_data_path,
                 self.data_config.test_data_path
             )
-
-
-
         except:
             raise Exception

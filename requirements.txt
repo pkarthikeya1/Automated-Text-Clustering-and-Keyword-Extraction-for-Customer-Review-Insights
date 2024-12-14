@@ -5,3 +5,6 @@ seaborn
 matplotlib
 streamlit
 sqlite-utils
+nltk
+joblib
+regex

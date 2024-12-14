@@ -1,2 +1,4 @@
 venv/
 artifacts/
+fasttext/
+ft_reviews_vectors.bin
