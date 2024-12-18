@@ -10,9 +10,9 @@ from src.logger import logger
 
 @dataclass
 class DataBaseConfig:
-    database_path:str = db_path
-    table:str = table_name
-    query:str = query
+    database_path: str = db_path
+    table: str = table_name
+    query: str = query
 
 
 class DataBaseHandler:

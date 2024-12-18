@@ -16,7 +16,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from gensim.models import KeyedVectors
 
-
+from src.utils import combine_main_and_subarrays
 from src.logger import logger
 from src.components.data_ingestion import DataIngestion, DataIngestionConfig
 from src.constants import num_columns,text_columns
@@ -182,8 +182,14 @@ class DataTransformation(TransformerMixin, BaseEstimator):
 
 
             preprocessing_obj = self.get_transformer_object()
-            input_feature_arr = preprocessing_obj.fit_transform(train_data)
-            input_test_arr = preprocessing_obj.transform(test_data)
+            logger.info(f"Transforming training data")
+            input_feature_arr = preprocessing_obj.fit_transform(train_data.values)
+            input_test_arr = preprocessing_obj.transform(test_data.values)
+
+            input_feature_arr = combine_main_and_subarrays(input_feature_arr)
+            logger.info(f"Transforming test data")
+            input_test_arr = combine_main_and_subarrays(input_test_arr)
+
 
             jl.dump(preprocessing_obj, self.data_transformation_config.preprocessor_obj_file)
             logger.info(f"Saved fitted preprocessor to {self.data_transformation_config.preprocessor_obj_file}")
