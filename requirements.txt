@@ -9,3 +9,4 @@ nltk
 joblib
 regex
 gensim
+umap-learn

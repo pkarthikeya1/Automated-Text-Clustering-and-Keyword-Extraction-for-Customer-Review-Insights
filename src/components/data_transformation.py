@@ -26,6 +26,8 @@ from src.db_paths import fast_text_model
 @dataclass
 class DataTransformationConfig:
     preprocessor_obj_file :str = os.path.join("artifacts", "preprocessor.joblib")
+    transformed_train_file : str = os.path.join("artifacts", "transformed_train_data.csv")
+    transformed_test_file : str = os.path.join("artifacts", "transformed_test_data.csv")
 
 @dataclass
 class DataColumns:
@@ -131,7 +133,7 @@ class make_embeddings(TransformerMixin, BaseEstimator):
             logger.error(f"Error during transformation: {e}")
             raise e
 
-class DataTransformation(TransformerMixin, BaseEstimator):
+class DataTransformation():
 
     def __init__ (self):
         try:
@@ -182,9 +184,11 @@ class DataTransformation(TransformerMixin, BaseEstimator):
 
 
             preprocessing_obj = self.get_transformer_object()
-            logger.info(f"Transforming training data")
-            input_feature_arr = preprocessing_obj.fit_transform(train_data.values)
-            input_test_arr = preprocessing_obj.transform(test_data.values)
+            logger.info("Fitting and transforming training data")
+            input_feature_arr = preprocessing_obj.fit_transform(train_data)
+            logger.info("Transforming test data")
+            input_test_arr = preprocessing_obj.transform(test_data)
+
 
             input_feature_arr = combine_main_and_subarrays(input_feature_arr)
             logger.info(f"Transforming test data")
@@ -194,8 +198,21 @@ class DataTransformation(TransformerMixin, BaseEstimator):
             jl.dump(preprocessing_obj, self.data_transformation_config.preprocessor_obj_file)
             logger.info(f"Saved fitted preprocessor to {self.data_transformation_config.preprocessor_obj_file}")
 
+            
+
+            logger.info(f"saving transformed train data and test data at {self.data_transformation_config.transformed_train_file} and {self.data_transformation_config.transformed_test_file} respectively")
+
+            feature_df = pd.DataFrame(input_feature_arr.astype('float32'), columns=[f"Column{i}" for i in range(1,27)])
+            # Save as CSV
+            feature_df.to_csv(self.data_transformation_config.transformed_train_file, index=False)
+
+            test_df = pd.DataFrame(input_test_arr.astype('float32'), columns=[f"Column{i}" for i in range(1,27)])
+            # Save as CSV
+            test_df.to_csv(self.data_transformation_config.transformed_test_file, index=False)
+
+
             logger.info(f"Returning the input train feature as an array and test feature as array respectively")
-            return input_feature_arr, input_test_arr
+            return input_feature_arr.astype('float32'), input_test_arr.astype('float32')
         except Exception as e:
             logger.info(f"Error in initiating the data transformation pipeline {e}")
             raise e
