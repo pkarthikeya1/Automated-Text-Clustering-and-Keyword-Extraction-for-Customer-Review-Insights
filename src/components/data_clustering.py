@@ -1,135 +1,122 @@
 import warnings
 import os
-warnings.filterwarnings("ignore")
-
 from dataclasses import dataclass
 
+
 import pandas as pd
-import numpy as np
 import joblib as jl
 
+
 from sklearn.base import TransformerMixin, BaseEstimator
-from sklearn.cluster import DBSCAN
+from sklearn.cluster import KMeans
 from sklearn.pipeline import Pipeline
-import umap
+from gensim.models import KeyedVectors
+
 
 from src.logger import logger
+from src.components.data_ingestion import DataIngestionConfig
 from src.components.data_transformation import DataTransformationConfig
+from src.db_paths import fast_text_model
 
+# Suppress warnings
+warnings.filterwarnings("ignore")
 
 @dataclass
 class ModellingConfig:
-    model_object : str = os.path.join('artifacts','cluster_model.joblib')
+    model_object: str = os.path.join('artifacts', 'cluster_model.joblib')
+    clustered_train_data_path: str = os.path.join('artifacts', 'clustered_train_data.csv')
+    clustered_test_data_path: str = os.path.join('artifacts', 'clustered_test_data.csv')
 
-
-class Reduce_Dimesionality(TransformerMixin, BaseEstimator):
-
-    def __init__ (self):
-
-        logger.info(f"Initiating the UMAP model for dimensionality reduction")
-        logger.info(f"The n_neighbours =100, min_dist =0.5, metric=cosine")
-
+class MakeEmbeddings(TransformerMixin, BaseEstimator):
+    def __init__(self):
+        logger.info("Loading Gensim Word2Vec model for embedding generation")
         try:
-            self.reducer = umap.UMAP(n_neighbors = 100, min_dist = 0.5, metric='cosine', n_jobs=-1, random_state=42, )
-            pass
+            self.word2vec = KeyedVectors.load_word2vec_format(fast_text_model, binary=True)
         except Exception as e:
-            logger.info(f"Error initializing the UMAP: {e}")
+            logger.error(f"Error loading Word2Vec model: {e}")
             raise e
-        
 
     def fit(self, X, y=None):
+        return self
 
+    def transform(self, X):
         try:
-            logger.info(f"Fitting the UMAP to the given data")
-            X_ = self.reducer.fit(X)
-            return X_
-        
+            logger.info("Generating embeddings for the text data")
+            embeddings = X.iloc[:, 0].apply(
+                lambda words: self.word2vec.get_mean_vector(words, ignore_missing=True)
+            )
+            return pd.DataFrame(embeddings.tolist())
         except Exception as e:
-            logger.info(f"Error fitting the data with UMP : {e}")
-            raise e
-    
-
-
-    def transform(self, X, y=None):
-        try:
-            logger.info(f"Transforming the given data using fitted UMAP model")
-            X_ = self.reducer.transform(X)
-            logger.info(f"Output shape after UMAP transform: {X_.shape}")
-            return X_  
-        except Exception as e:
-            logger.error(f"Error transforming the data using the UMAP model: {e}")
+            logger.error(f"Error during embedding generation: {e}")
             raise e
 
 
 class ClusterData(TransformerMixin, BaseEstimator):
     def __init__(self):
-        logger.info(f"Initializing the DBSCAN clustering model")
+        logger.info("Initializing K-Means clustering model")
         try:
-            self.dbscan = DBSCAN(eps=0.6, min_samples=100, n_jobs=-1)
-            pass
+            self.kmeans = KMeans(n_clusters=25, random_state=42)
         except Exception as e:
-            logger.info(f"Error initializing the DBSCAN clustering model: {e}")
+            logger.error(f"Error initializing K-Means model: {e}")
             raise e
 
     def fit(self, X, y=None):
         try:
-            logger.info(f"Fitting the data to the DBSCAN cluster model")
-            self.dbscan.fit(X)
+            logger.info("Fitting the K-Means model")
+            self.kmeans.fit(X)
             return self
         except Exception as e:
-            logger.info(f"Error in fitting the data to the DBSCAN cluster model: {e}")
+            logger.error(f"Error during K-Means fitting: {e}")
             raise e
 
     def transform(self, X, y=None):
         try:
-            logger.info(f"Transforming the data using the DBSCAN clustering model")
-            if X.ndim == 1:
-                X = X.reshape(-1, 1)  # Ensure input is 2D
-            labels = self.dbscan.fit_predict(X)
-            logger.info(f"Successfully assigned clusters using DBSCAN")
-            return labels.reshape(-1, 1)  # Ensure output is a 2D array
+            logger.info("Predicting cluster labels")
+            return self.kmeans.predict(X)
         except Exception as e:
-            logger.info(f"Error in transforming the data with the DBSCAN model: {e}")
+            logger.error(f"Error during K-Means prediction: {e}")
             raise e
 
-class Cluster_Modelling:
-
+class ClusterModelling:
     def __init__(self):
+        self.data_ingestion_config = DataIngestionConfig()
         self.data_trans_config = DataTransformationConfig()
         self.model_config = ModellingConfig()
-        pass
 
     def get_cluster_model(self):
 
-        clustering_pipeline = Pipeline(
-            [
-            ('Dimesionality Reduction UMAP', Reduce_Dimesionality()),
+        return Pipeline([
+            ('Make Embeddings', MakeEmbeddings()),
             ('Cluster Data', ClusterData())
+        ])
 
-            ]
-        )
-        return clustering_pipeline
-    
-    def initiate_clustering(self):
+    def initiate_clustering(self, train_data_path, test_data_path):
         try:
-            logger.info(f"Initialized clustering model")
-            cluster = self.get_cluster_model()
+            logger.info("Initializing clustering pipeline")
+            pipeline = self.get_cluster_model()
 
-            logger.info(f"Fitting the training data to the clustering model")
-            tr_data = pd.read_csv(self.data_trans_config.transformed_train_file)
+            logger.info("Loading train and test datasets")
+            train_data = pd.read_csv(train_data_path)
+            test_data = pd.read_csv(test_data_path)
 
-            train_cluster_labels = cluster.fit_transform(tr_data.values)
+            logger.info("Fitting and transforming train data")
+            train_cluster_labels = pipeline.fit_transform(train_data)
 
-            logger.info(f"saving fitted cluster model at {self.model_config.model_object}")
-            jl.dump(cluster, self.model_config.model_object)
+            logger.info(f"Saving trained model at {self.model_config.model_object}")
+            jl.dump(pipeline, self.model_config.model_object)
 
-            logger.info(f"Transforming the test data to")
-            ts_data = pd.read_csv(self.data_trans_config.transformed_test_file)
-            test_cluster_labels = cluster.transform(ts_data.values)
-    
+            logger.info("Transforming test data")
+            test_cluster_labels = pipeline.transform(test_data)
 
-            logger.info(f" Returning cluster labes of train data and test resectively")
+            logger.info("Attaching cluster labels to datasets")
+            train_data['cluster_id'] = train_cluster_labels
+            test_data['cluster_id'] = test_cluster_labels
+
+            train_data.to_csv(self.model_config.clustered_train_data_path, index=False)
+            test_data.to_csv(self.model_config.clustered_test_data_path, index=False)
+
+            logger.info("Clustering pipeline completed successfully")
             return train_cluster_labels, test_cluster_labels
         except Exception as e:
-            logger.info(f" Error in initiating the clustering pipeline : {e}")
+            logger.error(f"Error during clustering pipeline: {e}")
             raise e

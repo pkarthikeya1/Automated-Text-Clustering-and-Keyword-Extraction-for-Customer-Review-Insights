@@ -35,74 +35,63 @@ class DataColumns:
     Text_Columns = text_columns
 
 class remove_stop_words(TransformerMixin, BaseEstimator):
-
     def __init__(self):
-        
         try:
-            logger.info("getting set of stopwords from NLTK from English language")
+            logger.info("Getting set of stopwords from NLTK for English language")
             self.stop_words = set(stopwords.words('english'))
-            pass
         except Exception as e:
-            logger.info(f"Error loading set of stopwords from NLTK library: {e}")
+            logger.info(f"Error loading stopwords from NLTK library: {e}")
             raise e
-        
 
-    def fit(self, X):
+    def fit(self, X, y=None):
         return self
-
 
     def transform(self, X):
         self.X_ = X.copy()
         try:
-            logger.info(f"Transforming all the letters into lowercase")
-            self.X_ = self.X_.apply(lambda x: x.str.lower())
-            logger.info(f"Transforming all letters into lowercase is successful")
+            logger.info("Transforming all the letters into lowercase")
+            self.X_ = self.X_.map(lambda x: x.lower())
 
-            logger.info(f"Splitting the sentences into words (Tokenization)")
-            self.X_ = self.X_.apply(lambda x: x.str.split())
-            logger.info(f"Splitting the sentences into words is successful (Tokenization)")
-
+            logger.info("Tokenizing and removing stopwords")
             pattern = re.compile(r'[^a-zA-Z\s]+')  # Allow spaces
-            logger.info(f"Removing punctuations from text")
-            self.X_ = self.X_.map(lambda x: [pattern.sub('', word) for word in x])
-            logger.info(f"Removing punctuations from text successful")
-
-
-            logger.info(f"Removing the stopwords from the tokenized words")
-            self.X_ = self.X_.map(lambda x: [word for word in x if not word in self.stop_words ])
-            logger.info(f"Removing the stopwords from the tokenized words is successful")
+            self.X_ = self.X_.map(
+                lambda x: ' '.join(
+                    [pattern.sub('', word) for word in x.split() if word not in self.stop_words]
+                )
+            )
+            logger.info("Text cleaning and stopword removal successful")
         except Exception as e:
-            logger.info(f"Error in pre-processing the text: {e}")
+            logger.info(f"Error in preprocessing the text: {e}")
             raise e
-        
         return self.X_
 
 
-class lemmatization(TransformerMixin, BaseEstimator):
 
-    def __init__ (self):
+class lemmatization(TransformerMixin, BaseEstimator):
+    def __init__(self):
         try:
-            logger.info(f"WordNetLemmatizer from NLTK library is instantiated")
+            logger.info("Instantiating WordNetLemmatizer from NLTK")
             self.lemmatizer = WordNetLemmatizer()
-            pass
         except Exception as e:
-            logger.info(f"Error initiating the lemmatizer from NLTK library: {e}")
+            logger.info(f"Error initializing the lemmatizer: {e}")
             raise e
-        
-    
-    def fit(self, X):
+
+    def fit(self, X, y=None):
         return self
-    
+
     def transform(self, X):
         self.X_ = X.copy()
         try:
-            logger.info(f"Initiating the lemmatization of the remaining words after stopword removal")
-            self.X_ = self.X_.map(lambda x: [self.lemmatizer.lemmatize(word) for word in x])
-            logger.info(f"Lemmatization successful")
+            logger.info("Lemmatizing the words")
+            self.X_ = self.X_.map(
+                lambda x: ' '.join([self.lemmatizer.lemmatize(word) for word in x.split()])
+            )
+            logger.info("Lemmatization successful")
         except Exception as e:
             logger.info(f"Error in lemmatization: {e}")
             raise e
         return self.X_
+
     
 class make_embeddings(TransformerMixin, BaseEstimator):
 
@@ -177,8 +166,9 @@ class DataTransformation():
         try:
             logger.info(f"Initiatig data transformation pipeline")
             train_data = pd.read_csv(train_data_path)
-            test_data = pd.read_csv(test_data_path)
             train_data.dropna(inplace=True, axis=0)
+
+            test_data = pd.read_csv(test_data_path)
             test_data.dropna(inplace=True, axis=0)
             
 
@@ -204,14 +194,14 @@ class DataTransformation():
 
             feature_df = pd.DataFrame(input_feature_arr.astype('float32'), columns=[f"Column{i}" for i in range(1,27)])
             # Save as CSV
-            feature_df.to_csv(self.data_transformation_config.transformed_train_file, index=False)
+            feature_df.to_csv(self.data_transformation_config.transformed_train_file, index=False, )
 
             test_df = pd.DataFrame(input_test_arr.astype('float32'), columns=[f"Column{i}" for i in range(1,27)])
             # Save as CSV
             test_df.to_csv(self.data_transformation_config.transformed_test_file, index=False)
 
 
-            logger.info(f"Returning the input train feature as an array and test feature as array respectively")
+            logger.info(f"Returning the transformed input train feature as an array and  transfomed test feature as array respectively")
             return input_feature_arr.astype('float32'), input_test_arr.astype('float32')
         except Exception as e:
             logger.info(f"Error in initiating the data transformation pipeline {e}")
