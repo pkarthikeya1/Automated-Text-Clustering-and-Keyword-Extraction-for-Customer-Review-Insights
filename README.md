@@ -1,6 +1,6 @@
 # New Delhi Reviews - Clustering and Analysis
 
-This project aims to preprocess textual reviews, cluster them into meaningful groups, and extract top keywords for each cluster to provide insights. The workflow includes data ingestion from SQL database, data preprocessing, feature engineering, clustering, and keyword extraction.
+This project aims to preprocess textual reviews, cluster them into meaningful groups, and extract top keywords for each cluster to provide insights. The workflow includes data preprocessing, feature engineering, clustering, and keyword extraction.
 
 ---
 
@@ -31,7 +31,7 @@ The reviews were preprocessed using the following steps:
 
 1. **K-Means Clustering**:
    - Used the K-Means algorithm to cluster the reviews into distinct groups based on their 25-dimensional Word2Vec embeddings.
-   - The number of clusters was determined based on the elbow method with 25 clusters.
+   - The number of clusters was determined based on domain knowledge or the elbow method.
 
 ### **5. Keyword Extraction**
 
@@ -106,6 +106,11 @@ New_Delhi_Reviews/
    - Enter a review into the text box.
    - The app will predict its cluster and display a word cloud for the cluster's top keywords.
 
+4. **Sample Output**:
+   Below is a screenshot showcasing the word cloud generated for one of the clusters:
+
+   ![Sample Word Cloud](Screenshot.png)
+
 ---
 
 ## **Future Enhancements**
@@ -115,4 +120,5 @@ New_Delhi_Reviews/
 3. Improve clustering by experimenting with advanced models like DBSCAN or hierarchical clustering.
 4. Visualize clusters using dimensionality reduction techniques like t-SNE or UMAP.
 
----
+
+
