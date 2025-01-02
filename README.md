@@ -31,7 +31,7 @@ The reviews were preprocessed using the following steps:
 
 1. **K-Means Clustering**:
    - Used the K-Means algorithm to cluster the reviews into distinct groups based on their 25-dimensional Word2Vec embeddings.
-   - The number of clusters was determined based on domain knowledge or the elbow method.
+   - The number of clusters was determined based on the elbow method with 25 clusters.
 
 ### **5. Keyword Extraction**
 
