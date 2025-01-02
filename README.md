@@ -1,13 +1,13 @@
 # New Delhi Reviews - Clustering and Analysis
 
-This project aims to preprocess textual reviews, cluster them into meaningful groups, and extract top keywords for each cluster to provide insights. The workflow includes data preprocessing, feature engineering, clustering, and keyword extraction.
+This project aims to preprocess textual reviews, cluster them into meaningful groups, and extract top keywords for each cluster to provide insights. The workflow includes data ingestion from SQL database, data preprocessing, feature engineering, clustering, and keyword extraction.
 
 ---
 
 ## **Project Workflow**
 
 ### **1. Data Collection**
-- Reviews were collected from a dataset consisting of user-generated content.
+- Reviews were collected from a dataset consisting of user-generated content from a SQL database.
 
 ### **2. Text Preprocessing**
 The reviews were preprocessed using the following steps:
