@@ -1,4 +1,4 @@
-Automated Text Clustering and Keyword Extraction for Customer Review Insights 
+#Automated Text Clustering and Keyword Extraction for Customer Review Insights 
 
 This project aims to preprocess textual reviews, cluster them into meaningful groups, and extract top keywords for each cluster to provide insights. The workflow includes data ingestion from SQL database, data preprocessing, feature engineering, clustering, and keyword extraction.
 
