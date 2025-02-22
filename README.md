@@ -7,7 +7,7 @@ This project aims to preprocess textual reviews, cluster them into meaningful gr
 
 ### Screen Shot
 <p align="center">
-  <img src="src/System-Architecture.svg" alt="Screen Shot" width="600" height="400" />
+  <img src="src/System-Architecture.SVG" alt="Screen Shot" width="600" height="400" />
 </p>
 
 
