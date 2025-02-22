@@ -3,9 +3,19 @@
 This project aims to preprocess textual reviews, cluster them into meaningful groups, and extract top keywords for each cluster to provide insights. The workflow includes data preprocessing, feature engineering, clustering, and keyword extraction.
 
 ---
-## This is the architecture for this ML System
-![Sytem architecture](System-architecture.SVG)
+## ML SystemArchitecture
+<p align="center">
+  <img src="System-architecture.SVG" alt="Flow Chart" width="400" height="350" />
+</p>
+
 ---
+### Screen Shot
+<p align="center">
+  <img src="src/Screenshot.png" alt="Screen Shot" width="200" height="200" />
+</p>
+
+
+
 ## **Project Workflow**
 
 ### **1. Data Collection**
@@ -20,7 +30,7 @@ The reviews were preprocessed using the following steps:
 2. **Tokenization**:
    - Split text into individual words using **NLTK** (Natural Language Toolkit).
 
-3. **Lemmatization**:
+3. **Lemmatization**
    - Reduced words to their base or root form using NLTK's WordNetLemmatizer to normalize the text.
 
 ### **3. Feature Engineering**
@@ -108,10 +118,6 @@ New_Delhi_Reviews/
    - Enter a review into the text box.
    - The app will predict its cluster and display a word cloud for the cluster's top keywords.
 
-4. **Sample Output**:
-   Below is a screenshot showcasing the word cloud generated for one of the clusters:
-
-   ![Sample Word Cloud](Screenshot.png)
 
 ---
 
