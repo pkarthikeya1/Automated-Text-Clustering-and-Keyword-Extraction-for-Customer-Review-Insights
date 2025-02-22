@@ -1,13 +1,15 @@
-# **Automated Text Clustering and Keyword Extraction for Customer Review Insights**
+# New Delhi Reviews - Clustering and Analysis
 
-This project aims to preprocess textual reviews, cluster them into meaningful groups, and extract top keywords for each cluster to provide insights. The workflow includes data ingestion from SQL database, data preprocessing, feature engineering, clustering, and keyword extraction.
+This project aims to preprocess textual reviews, cluster them into meaningful groups, and extract top keywords for each cluster to provide insights. The workflow includes data preprocessing, feature engineering, clustering, and keyword extraction.
 
 ---
-
+## This is the architecture for this ML System
+![Sytem architecture](System-architecture.png)
+---
 ## **Project Workflow**
 
 ### **1. Data Collection**
-- Reviews were collected from a dataset consisting of user-generated content from a SQL database.
+- Reviews were collected from a dataset consisting of user-generated content.
 
 ### **2. Text Preprocessing**
 The reviews were preprocessed using the following steps:
@@ -31,7 +33,7 @@ The reviews were preprocessed using the following steps:
 
 1. **K-Means Clustering**:
    - Used the K-Means algorithm to cluster the reviews into distinct groups based on their 25-dimensional Word2Vec embeddings.
-   - The number of clusters was determined based on the elbow method with 25 clusters.
+   - The number of clusters was determined based on domain knowledge or the elbow method.
 
 ### **5. Keyword Extraction**
 
