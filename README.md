@@ -3,13 +3,16 @@
 This project aims to preprocess textual reviews, cluster them into meaningful groups, and extract top keywords for each cluster to provide insights. The workflow includes data preprocessing, feature engineering, clustering, and keyword extraction.
 
 ---
-## ML SystemArchitecture
+## ML System Architecture
+
+### Screen Shot
 <p align="center">
-  <img src="System-architecture.SVG" alt="Flow Chart" width="400" height="350" />
+  <img src="src/System-Architecture.svg" alt="Screen Shot" width="600" height="400" />
 </p>
 
+
 ---
-### Screen Shot
+### User Interface
 <p align="center">
   <img src="src/Screenshot.png" alt="Screen Shot" width="200" height="200" />
 </p>
