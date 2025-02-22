@@ -4,7 +4,7 @@ This project aims to preprocess textual reviews, cluster them into meaningful gr
 
 ---
 ## This is the architecture for this ML System
-![Sytem architecture](System-architecture.png)
+![Sytem architecture](System-architecture.svg)
 ---
 ## **Project Workflow**
 
