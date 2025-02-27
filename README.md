@@ -2,8 +2,9 @@
 
 This project aims to preprocess textual reviews, cluster them into meaningful groups, and extract top keywords for each cluster to provide insights. The workflow includes data preprocessing, feature engineering, clustering, and keyword extraction.
 ## **Project Workflow Outline**
+
 <p align="center">
-  <img src="ProjectWorkflow.svg" alt="Screen Shot" width="200" height="200" />
+  <img src="ProjectWorkflow.svg" alt="Screen Shot" width="1000" height="300" />
 </p>
 
 
